@@ -66,3 +66,5 @@ gem 'slim-rails'
 gem 'html2slim'
 # bootstrap
 gem 'bootstrap'
+
+gem 'rails_autolink'

@@ -11,8 +11,11 @@ table.table.table-hover
       th= Task.human_attribute_name(:name)
       td = @task.name
     tr
+      / Config/locales/ja.yml に定義してある翻訳内容を良しなに解釈してくれるActiveRecodeメソッド。th 氏名
       th= Task.human_attribute_name(:description)
-      td = simple_format(h(@task.description),{},sanitize: false,wrapper_tag: "div")
+      / td = simple_format(h(@task.description),{},sanitize: false,wrapper_tag: "div")
+      / なぜか適用されず
+      td = auto_link(simple_format(h(@task.description),{},sanitize: false,wrapper_tag: "div"))
     / tr
     /   th= Task.human_attribute_name(:description)
     /   td = @task.description
