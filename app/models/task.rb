@@ -6,10 +6,19 @@ class Task < ApplicationRecord
 
   belongs_to :user
 
-  # スコープ（データの絞り込みの③実行部分をまとめられるもの）
+  # スコープ（データの絞り込みの②絞り込み部分をまとめられるもの）
   # スコープ使わないとコントローラで@tasks =current_user.tasks.order(created_at: :desc)と書く
   # 使うとTask.recentのように使える
-  scope :recent, -> {order(created_at: :desc)}
+  # scope :recent, -> {order(created_at: :desc)
+
+  # ransack
+  def self.ransackable_attributes(auth_object = nil)
+    %w[name created_at]
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
 
   private
   def validate_name_not_including_comma
