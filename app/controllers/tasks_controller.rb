@@ -4,9 +4,14 @@ class TasksController < ApplicationController
     # @tasks =Task.all
     # モデルのスコープ（データの絞り込みの③実行部分をまとめられるもの）で代わりに記載
     # @tasks =current_user.tasks.order(created_at: :desc)
-    @tasks =current_user.tasks.recent
+    # @tasks =current_user.tasks.recent
     # 下記と同じ
-    # @tasks =Task.where(user_id:current_user.id)
+    # @tasks =Task.where(user_id:current_user.id).recent
+
+    @q=current_user.tasks.ransack(params[:q])
+    # recentはorder byをモデルでスコープにしたもの
+    # @tasks = @q.result(distinct: true).recent
+    @tasks = @q.result(distinct: true)
   end
 
   def show
@@ -20,7 +25,8 @@ class TasksController < ApplicationController
   end
 
   def confirm_new
-    @task = Task.new(task_params)
+    @task = current_user.tasks.new(task_params)
+    # binding.pry
     render :new unless @task.valid?
   end
 
@@ -30,16 +36,21 @@ class TasksController < ApplicationController
     # 「アソシエーション.new」の場合、FKのカラムuser_idには自動的に current_userのID入る
     @task = current_user.tasks.new(task_params)
 
+    if params[:back].present?
+      render :new
+      return
+    end
     # task.save!
     # redirect_to tasks_url, notice: "タスク「#{task.name}」を登録しました。"
     if @task.save
+      TaskMailer.creation_email(@task).deliver_now
       logger.debug "==============デバッグ用=============task: #{@task.attributes.inspect}"
       redirect_to tasks_url, notice: "タスク「#{@task.name}」を登録しました。"
     else
       render :new
     end
   end
-  
+
   def edit
     # @task =Task.find(params[:id])
     # @task =current_user.tasks.find(params[:id])

@@ -68,3 +68,5 @@ gem 'html2slim'
 gem 'bootstrap'
 
 gem 'rails_autolink'
+gem 'pry-byebug'
+gem 'ransack'
